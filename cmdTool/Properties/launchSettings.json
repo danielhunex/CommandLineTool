@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CmdTool": {
+      "commandName": "Project",
+      "commandLineArgs": "uninstall -m \"python launcher\" zoom"
+    }
+  }
+}
