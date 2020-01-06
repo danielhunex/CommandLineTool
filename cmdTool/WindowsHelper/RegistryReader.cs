@@ -73,22 +73,23 @@ namespace CmdTool.WindowsHelper
         private (bool, string) ParseUninstallString(string uninstallstring)
         {
             bool isExe = false;
+            string modifiedUinstall;
             if (uninstallstring.Substring(0, 1).Equals("\"") |
                 uninstallstring.ToLower().Contains("msiexec") |
                 uninstallstring.Contains("~"))
             {
-                //Do nothing
+                modifiedUinstall = uninstallstring;
             }
             else if (uninstallstring.ToLower().IndexOf(".exe") > 0)
             {
-                uninstallstring = "\"" + uninstallstring.Insert(uninstallstring.ToLower().IndexOf(".exe") + 4, "\"");
+                modifiedUinstall = "\"" + uninstallstring.Insert(uninstallstring.ToLower().IndexOf(".exe") + 4, "\"");
                 isExe = true;
             }
             else
             {
-                uninstallstring = "\"" + uninstallstring + "\"";
+                modifiedUinstall = "\"" + uninstallstring + "\"";
             }
-            return (isExe, uninstallstring);
+            return (isExe, modifiedUinstall);
         }
     }
 

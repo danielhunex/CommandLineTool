@@ -34,20 +34,19 @@ namespace CmdTool
                     _logger.LogError($"Error occurred while trying to read installed program. Make sure that you are running under elevated mode {NewLine} {ex.Message}");
                     return;
                 }
+                bool silent = command.Flags.TryGetValue("-silent", out var slt);
 
-                string flag = command.Flags.ToArray()[0];
-
-                if (flag.Equals("-s", StringComparison.OrdinalIgnoreCase))
+                if (command.Flags.TryGetValue("-s", out var single))
                 {
-                    var programInfo = programs.Where(pr => pr.Name.ToLower().Contains(command.Args.ToArray()[0].ToLower())).FirstOrDefault();
-                    Uninstall(programInfo, command);
+                    var programInfo = GetProgramInfo(command.Args.ToArray()[0], programs);
+                    Uninstall(programInfo, command, silent);
                 }
-                else if (flag.Equals("-m", StringComparison.OrdinalIgnoreCase))
+                else if (command.Flags.TryGetValue("-m", out var multiple))
                 {
                     foreach (var arg in command.Args)
                     {
-                        var programInfo = programs.Where(pr => pr.Name.ToLower().Contains(arg.ToLower())).FirstOrDefault();
-                        Uninstall(programInfo, command, arg);
+                        var programInfo = GetProgramInfo(arg, programs);
+                        Uninstall(programInfo, command, silent, arg);
                     }
                 }
                 else
@@ -62,13 +61,35 @@ namespace CmdTool
             }
         }
 
-        private void Uninstall<T>(ProgramInfo info, T command, string arg = null) where T : ICommand
+        private ProgramInfo GetProgramInfo(string programName, SortedSet<ProgramInfo> programs)
+        {
+            if (!programName.Contains("*"))
+            {
+                return programs.Where(pr => pr.Name.ToLower().Equals(programName.ToLower(), StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            }
+            if (programName.StartsWith("*"))
+            {
+                var partOfProgramName = programName.Substring(1);
+                return programs.Where(pr => pr.Name.ToLower().Contains(partOfProgramName.ToLower())).FirstOrDefault();
+            }
+            if (programName.EndsWith("*"))
+            {
+                var partOfProgramName = programName.Substring(0, programName.Length - 1);
+                return programs.Where(pr => pr.Name.ToLower().Contains(partOfProgramName.ToLower())).FirstOrDefault();
+            }
+            int wildCardIndex = programName.IndexOf("*");
+            var firstPartName = programName.Substring(0, wildCardIndex);
+            var secondPartName = programName.Substring(wildCardIndex + 1);
+            return programs.Where(pr => pr.Name.ToLower().Contains(firstPartName.ToLower()) && pr.Name.ToLower().Contains(secondPartName.ToLower())).FirstOrDefault();
+        }
+
+        private void Uninstall<T>(ProgramInfo info, T command, bool silent = false, string arg = null) where T : ICommand
         {
             try
             {
                 if (info == null)
                 {
-                    _logger.LogWarning($"Unable to find the programe: {arg}. You need to type the full name of the application. {command.ToHelp()}");
+                    _logger.LogWarning($"Unable to find the programe: {arg}. You need to type the full name of the application or use wildcard (*). {command.ToHelp()}");
                 }
                 else
                 {
@@ -76,8 +97,9 @@ namespace CmdTool
 
                     if (!info.IsExe)
                     {
+                        string silentFlag = silent ? "/qn" : "";
                         process.StartInfo.FileName = "msiexec.exe";
-                        process.StartInfo.Arguments = info.UninstallInfo.ToLower().Replace("msiexec.exe", "");
+                        process.StartInfo.Arguments = $"{info.UninstallInfo.ToLower().Replace("msiexec.exe", "")} {silentFlag}";
                     }
                     else
                     {
@@ -85,6 +107,7 @@ namespace CmdTool
                         string exe = info.UninstallInfo.Substring(0, endOfExeIndex);
                         string argument = info.UninstallInfo.Substring(endOfExeIndex);
                         process.StartInfo.FileName = exe;
+                        process.StartInfo.UseShellExecute = !silent;
                         process.StartInfo.Arguments = argument;
                     }
                     process.Start();
