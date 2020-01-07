@@ -28,13 +28,13 @@ CmdTool.exe uninstall <flags> [software names]
 [software names]: the full names of the softwares to be uninstalled.
                 Multiword names should be in quotes (see the example below)
                  Only single wildcard (*) is supported in the names. Wildcard can be at start, end or in the middle
-<flags>: -s (single) -m  (multiple) -silent (for silently uninstalling)
+<flags>: -s (single) -m  (multiple) -silent (for silently uninstalling) -help(for showing help)
 
 EXAMPLE:
 CmdTool.exe uninstall -s Zoom    This will uninstall Zoom
 CmdTool.exe uninstall -s -silent "Python Laucher"    This will uninstall 'Python Laucher' silently
-CmdTool.exe uninstall -m "Notepad++*" Zoom    This will uninstall Notepad++ and Zoom
-
+CmdTool.exe uninstall -m "Notepad++\*" Zoom    This will uninstall Notepad++ and Zoom
+CmdTool.exe uninstall -help    this will show help
 
 In order to extend the application (add another command)
 
