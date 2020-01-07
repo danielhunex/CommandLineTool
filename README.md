@@ -39,6 +39,6 @@ CmdTool.exe uninstall -m "Notepad++*" Zoom    This will uninstall Notepad++ and 
 In order to extend the application (add another command)
 
 1. Implement the abstract class `Command` Say `MyNewCommand`
-2. Implement `ICommandHandler<>` Command Say `MyNewCommandHandler<MyNewCommand>
+2. Implement `ICommandHandler<>` Command Say `MyNewCommandHandler<MyNewCommand>`
 
 That is all needed.
