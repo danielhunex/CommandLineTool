@@ -31,14 +31,15 @@ CmdTool.exe uninstall <flags> [software names]
 <flags>: -s (single) -m  (multiple) -silent (for silently uninstalling) -help(for showing help)
 
 EXAMPLE:
-CmdTool.exe uninstall -s Zoom    This will uninstall Zoom
-CmdTool.exe uninstall -s -silent "Python Laucher"    This will uninstall 'Python Laucher' silently
-CmdTool.exe uninstall -m "Notepad++\*" Zoom    This will uninstall Notepad++ and Zoom
-CmdTool.exe uninstall -help    this will show help
 
-In order to extend the application (add another command)
+CmdTool.exe uninstall -s Zoom    This will uninstall Zoom  
+CmdTool.exe uninstall -s -silent "Python Laucher"    This will uninstall 'Python Laucher' silently  
+CmdTool.exe uninstall -m "Notepad++\*" Zoom    This will uninstall Notepad++ and Zoom  
+CmdTool.exe uninstall -help    this will show help  
 
-1. Implement the abstract class `Command` Say `MyNewCommand`
-2. Implement `ICommandHandler<>` Command Say `MyNewCommandHandler<MyNewCommand>`
+In order to extend the application (add another command)  
+
+1. Implement the abstract class `Command` Say `MyNewCommand`  
+2. Implement `ICommandHandler<>` Command Say `MyNewCommandHandler<MyNewCommand>`  
 
 That is all needed.
