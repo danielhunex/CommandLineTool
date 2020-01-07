@@ -69,7 +69,7 @@ namespace CmdTool
                    .Append("\t[software names]: the full names of the softwares to be uninstalled.")
                    .Append($"{NewLine}\t\tMultiword names should be in quotes (see the example below)")
                    .Append($"{NewLine}\t\t Only single wildcard (*) is supported in the names. Wildcard can be at start, end or in the middle")
-                   .Append($"{NewLine}\t<flags>: -s (single) -m (multiple)")
+                   .Append($"{NewLine}\t<flags>: -s (single) -m (multiple) -silent (for uninstalling silently) -help(show help)")
                    .Append(NewLine)
                    .Append("EXAMPLE:")
                    .Append(NewLine)
@@ -77,7 +77,9 @@ namespace CmdTool
                    .Append($"{NewLine}")
                    .Append($"\tCmdTool.exe {Name} -s -silent \"Python Laucher\"    This will uninstall 'Python Laucher' silently")
                    .Append(NewLine)
-                   .Append($"\tCmdTool.exe {Name} -m \"Notepad++*\" Zoom    This will uninstall Notepad++ and Zoom");
+                   .Append($"\tCmdTool.exe {Name} -m \"Notepad++*\" Zoom    This will uninstall Notepad++ and Zoom")
+                   .Append($"{NewLine}")
+                   .Append($"\tCmdTool.exe {Name} -help  will show the help of the uninstall command");
             return builder.ToString();
         }
     }
