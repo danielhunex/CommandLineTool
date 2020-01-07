@@ -94,23 +94,41 @@ namespace CmdTool
                 else
                 {
                     var process = new Process();
+                    string argument;
+                    string exe;
 
                     if (!info.IsExe)
                     {
                         string silentFlag = silent ? "/qn" : "";
-                        process.StartInfo.FileName = "msiexec.exe";
-                        process.StartInfo.Arguments = $"{info.UninstallInfo.ToLower().Replace("msiexec.exe", "")} {silentFlag}";
+                        exe = "msiexec.exe";
+                        argument = $"{info.UninstallInfo.ToLower().Replace("msiexec.exe", "")} {silentFlag}";
                     }
                     else
                     {
                         int endOfExeIndex = info.UninstallInfo.ToLower().IndexOf(".exe") + 5;
-                        string exe = info.UninstallInfo.Substring(0, endOfExeIndex);
-                        string argument = info.UninstallInfo.Substring(endOfExeIndex);
-                        process.StartInfo.FileName = exe;
-                        process.StartInfo.UseShellExecute = !silent;
-                        process.StartInfo.Arguments = argument;
+                        exe = info.UninstallInfo.Substring(0, endOfExeIndex);
+                        argument = info.UninstallInfo.Substring(endOfExeIndex);
+                        process.StartInfo.CreateNoWindow = silent;
                     }
+
+                    process.StartInfo.FileName = exe;
+                    process.StartInfo.Arguments = argument;
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.ErrorDialog = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+
+                    process.ErrorDataReceived += (sendingProcess, errorLine) => { if (!string.IsNullOrWhiteSpace(errorLine.Data)) {_logger.LogInformation(errorLine.Data); } };
+                    process.OutputDataReceived += (sendingProcess, dataLine) => { if (!string.IsNullOrWhiteSpace(dataLine.Data)) { _logger.LogInformation(dataLine.Data); } };
+
                     process.Start();
+                    process.BeginErrorReadLine();
+                    process.BeginOutputReadLine(); 
+
+                    process.WaitForExit();
+
+
+
                 }
             }
             catch (Exception ex)
